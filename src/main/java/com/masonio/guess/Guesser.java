@@ -5,18 +5,23 @@ import com.masonio.io.WordReader;
 import java.util.*;
 
 public class Guesser {
-    private final Map<Integer, Set<Character>> gray = new HashMap<>();
+    private final Map<Integer, Set<Character>> excluded = new HashMap<>();
 
     public String makeGuess(Map<Integer, Character> green, Character[] yellow) {
-        green.forEach((key, value) -> green.put(key, Character.toLowerCase(value)));
+        green.replaceAll((key, value) -> Character.toLowerCase(value));
+        green.forEach((key, value) -> {
+            if (excluded.containsKey(key)) {
+                excluded.get(key).remove(value);
+            }
+        });
 
         List<String> s = WordReader.getInstance().getWords()
                 .stream()
                 .filter(str -> {
-                    //Filter for strings with gray values (grayed values) in right space
+                    //Filter for strings with excluded values (grayed letters)
                     char[] chars = str.toLowerCase().toCharArray();
                     for (int i = 0; i < chars.length; i++) {
-                        if (gray.containsKey(i) && gray.get(i).contains(chars[i])) {
+                        if (excluded.containsKey(i) && excluded.get(i).contains(chars[i])) {
                             return false;
                         }
                     }
@@ -35,7 +40,7 @@ public class Guesser {
                     return true;
                 })
                 .filter(str -> {
-                    //Filter for strings with yellow values in right space
+                    //Filter for strings with yellow values
                     for (char c : yellow) {
                         if (!str.contains(String.valueOf(Character.toLowerCase(c)))) {
                             return false;
@@ -55,12 +60,18 @@ public class Guesser {
     }
 
     public void addExclusion(int key, Character value) {
-        if (!gray.containsKey(key)) {
+        if (!excluded.containsKey(key)) {
             HashSet<Character> set = new HashSet<>();
             set.add(Character.toLowerCase(value));
-            gray.put(key, set);
+            excluded.put(key, set);
         } else {
-            gray.get(key).add(Character.toLowerCase(value));
+            excluded.get(key).add(Character.toLowerCase(value));
+        }
+    }
+
+    public void addExclusion(Character value) {
+        for (int i = 0; i < 5; i++) {
+            this.addExclusion(i, value);
         }
     }
 }

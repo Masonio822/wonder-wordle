@@ -877,6 +877,7 @@ glyph
 gnash
 gnome
 godly
+gofer
 going
 golem
 golly
@@ -2070,6 +2071,7 @@ tipsy
 titan
 tithe
 title
+tizzy
 toast
 today
 toddy

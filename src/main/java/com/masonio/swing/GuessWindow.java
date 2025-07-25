@@ -78,19 +78,21 @@ public class GuessWindow extends JFrame {
 
     private JButton createSubmitButton() {
         JButton submitButton = new JButton("Submit Results");
-        submitButton.addActionListener(l -> {
+        submitButton.addActionListener(_ -> {
             Map<Integer, Character> greenMap = new HashMap<>();
-            List<Character> yellowList = new ArrayList<>();
+            ArrayList<Character> yellowList = new ArrayList<>();
             int correct = 0;
 
+            String word = currentGuessLabel.getText().toLowerCase();
             for (int i = 0; i < guessButtons.size(); i++) {
                 if (guessButtons.get(i).getBackground().equals(ButtonColors.GREEN.color)) {
-                    greenMap.put(i, currentGuessLabel.getText().charAt(i));
+                    greenMap.put(i, word.charAt(i));
                     correct++;
                 } else if (guessButtons.get(i).getBackground().equals(ButtonColors.YELLOW.color)) {
-                    yellowList.add(currentGuessLabel.getText().charAt(i));
+                    yellowList.add(word.charAt(i));
+                    guesser.addExclusion(i, word.charAt(i));
                 } else if (guessButtons.get(i).getBackground().equals(ButtonColors.GRAY.color)) {
-                    guesser.addExclusion(i, currentGuessLabel.getText().charAt(i));
+                    guesser.addExclusion(word.charAt(i));
                 }
             }
 
@@ -98,7 +100,7 @@ public class GuessWindow extends JFrame {
                 currentGuessLabel.setForeground(Color.ORANGE);
                 submitButton.setEnabled(false);
             } else {
-                guess(guesser.makeGuess(greenMap, yellowList.toArray(new Character[]{})));
+                guess(guesser.makeGuess(greenMap, yellowList.toArray(new Character[0])));
             }
         });
 
